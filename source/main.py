@@ -232,10 +232,6 @@ class Buttons(QtWidgets.QWidget):
 
         self.setLayout(box)
 
-    def test(self):
-        print "hey"
-
-
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super(type(self), self).__init__()
