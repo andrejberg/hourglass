@@ -10,7 +10,6 @@ class Timer(QtWidgets.QWidget):
         self.duration = 0               # in minutes
         self.remaining = self.duration
         self.proportion = 0.0
-        #self.update_time()
 
         # display options
         self.nullPosition = 90             # top, 0 is left
@@ -43,17 +42,16 @@ class Timer(QtWidgets.QWidget):
     def mouseDoubleClickEvent(self, QMouseEvent):
         self.timer.stop()
         self.is_running = False
+        self.is_finished = False
         self.hide()
         self.parent().buttons.show()
 
-    # @pyqtSlot()
     def run_timer(self, duration):
         self.duration = duration
         self.remaining = self.duration
         self.proportion = 0.0
         self.gradientData = [QtGui.QColor.fromRgb(255, 255, 255),  # white
                              QtGui.QColor.fromRgb(0, 169, 254)]  # blue
-        #self.update_time()
         self.update()
         self.show()
         # setup timer for count down
@@ -64,9 +62,8 @@ class Timer(QtWidgets.QWidget):
         if self.remaining > 0:
 
             if self.proportion < 100.0:
-                self.proportion += (100 * float(self.tic_length) / 6000.0)
+                self.proportion += (100 * float(self.tic_length) / 60000.0)
             else:
-                #self.timer.stop()
                 self.proportion = 0.0
                 self.remaining -= 1
 
@@ -174,7 +171,10 @@ class Timer(QtWidgets.QWidget):
 
             # for pos, color in self.gradientData:
             dataBrush.setColorAt(1.0, self.gradientData[0])
-            dataBrush.setColorAt(1.0 - self.proportion / 100.0, self.gradientData[1])
+            if (1.0 - self.proportion / 100.0) < 0.0:
+                dataBrush.setColorAt(0.0, self.gradientData[1])
+            else:
+                dataBrush.setColorAt(1.0 - self.proportion / 100.0, self.gradientData[1])
 
             # angle
             dataBrush.setAngle(self.nullPosition)
@@ -183,41 +183,38 @@ class Timer(QtWidgets.QWidget):
             p.setBrush(QtGui.QPalette.Highlight, dataBrush)
             self.setPalette(p)
 
+class StartButton(QtWidgets.QPushButton):
+
+    def __init__(self, duration, parent):
+        super(StartButton, self).__init__()
+        self.setText(str(duration))
+        self.setParent(parent)
+
+        f = QtGui.QFont()
+        f.setPixelSize(30)
+        self.setFont(f)
+
+        self.clicked.connect(self.parent().hide)
+        self.clicked.connect(lambda: self.parent().parent().bar.run_timer(duration))
+
 class Buttons(QtWidgets.QWidget):
 
     def __init__(self):
         super(Buttons, self).__init__()
 
-        #self.button = QtWidgets.QPushButton("10sec", self)
-        self.button3 = QtWidgets.QPushButton("3", self)
-        self.button5 = QtWidgets.QPushButton("5", self)
-        self.button6 = QtWidgets.QPushButton("6", self)
-        self.button7 = QtWidgets.QPushButton("7", self)
-        self.button8 = QtWidgets.QPushButton("8", self)
-        self.button9 = QtWidgets.QPushButton("9", self)
-        self.button10 = QtWidgets.QPushButton("10", self)
-        self.button15 = QtWidgets.QPushButton("15", self)
-        self.button20 = QtWidgets.QPushButton("20", self)
-        self.button25 = QtWidgets.QPushButton("25", self)
-        self.button30 = QtWidgets.QPushButton("30", self)
-        self.button45 = QtWidgets.QPushButton("45", self)
-        self.button90 = QtWidgets.QPushButton("90", self)
-
-        self.button3.clicked.connect(self.hide)
-
-        # self.connect(self.button3, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button5, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button6, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button7, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button8, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button9, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button10, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button15, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button20, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button25, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button30, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button45, QtCore.SIGNAL("clicked()"), self.hide)
-        # self.connect(self.button90, QtCore.SIGNAL("clicked()"), self.hide)
+        self.button3 = StartButton(3, self)
+        self.button5 = StartButton(5, self)
+        self.button6 = StartButton(6, self)
+        self.button7 = StartButton(7, self)
+        self.button8 = StartButton(8, self)
+        self.button9 = StartButton(9, self)
+        self.button10 = StartButton(10, self)
+        self.button15 = StartButton(15, self)
+        self.button20 = StartButton(20, self)
+        self.button25 = StartButton(25, self)
+        self.button30 = StartButton(30, self)
+        self.button45 = StartButton(45, self)
+        self.button90 = StartButton(90, self)
 
         box = QtWidgets.QHBoxLayout()
         box.addWidget(self.button3)
@@ -240,7 +237,7 @@ class Buttons(QtWidgets.QWidget):
         print "hey"
 
 
-class TstWidget(QtWidgets.QWidget):
+class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super(type(self), self).__init__()
 
@@ -250,21 +247,6 @@ class TstWidget(QtWidgets.QWidget):
         self.bar.hide()
 
         self.buttons = Buttons()
-        self.buttons.button3.clicked.connect(lambda: self.bar.run_timer(3))
-        # self.connect(self.buttons.button3, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(3))
-        # self.connect(self.buttons.button5, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(5))
-        # self.connect(self.buttons.button6, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(6))
-        # self.connect(self.buttons.button7, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(7))
-        # self.connect(self.buttons.button8, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(8))
-        # self.connect(self.buttons.button9, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(9))
-        # self.connect(self.buttons.button10, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(10))
-        # self.connect(self.buttons.button15, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(15))
-        # self.connect(self.buttons.button20, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(20))
-        # self.connect(self.buttons.button25, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(25))
-        # self.connect(self.buttons.button30, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(30))
-        # self.connect(self.buttons.button45, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(45))
-        # self.connect(self.buttons.button90, QtCore.SIGNAL("clicked()"), lambda: self.bar.run_timer(90))
-
 
         hbox = QtWidgets.QHBoxLayout()
         hbox.addStretch(1)
@@ -289,7 +271,7 @@ class TstWidget(QtWidgets.QWidget):
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    main_window = TstWidget()
+    main_window = MainWindow()
     main_window.resize(500, 500)
     main_window.move(300, 300)
     main_window.setWindowTitle('Timer')
