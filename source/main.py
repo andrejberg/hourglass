@@ -28,7 +28,6 @@ class Timer(QtWidgets.QWidget):
         self.is_finished = False
 
         self.sound = QSound('sound.wav')
-        # print self.sound.isAvailable()
 
     def mousePressEvent(self, QMouseEvent):
         if not self.is_finished:
@@ -146,7 +145,7 @@ class Timer(QtWidgets.QWidget):
 
         delta = (outerRadius - innerRadius) / 2.
         innerRect = QtCore.QRectF(delta, delta, innerRadius, innerRadius)
-        return innerRect, innerRadius
+        return(innerRect, innerRadius)
 
     def drawText(self, p, innerRect, innerRadius, value):
         text = "  %i  " % self.remaining
