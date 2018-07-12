@@ -1,6 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtWidgets, Qt, QtGui
 from PyQt5.QtMultimedia import QSound
+# from PyQt5.QtCore import pyqtSlot
 
 class Timer(QtWidgets.QWidget):
 
