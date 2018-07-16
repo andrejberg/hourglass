@@ -7,13 +7,10 @@
 
 ## Install
 ### From source
-```python
+```bash
 git clone git@github.com:andrejberg/hourglass.git
-
 cd hourglass
-
 pip install -r requirements.py
-
 python main.py
 ```
 
@@ -23,7 +20,7 @@ python main.py
 - Run main.exe
 
 ### Compile
-
+```bash
 python setup.py build
-
+```
 (cp -r platforms build/)
