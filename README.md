@@ -7,7 +7,7 @@
 
 ## Install
 ### From source
-`
+```python
 git clone git@github.com:andrejberg/hourglass.git
 
 cd hourglass
@@ -15,7 +15,8 @@ cd hourglass
 pip install -r requirements.py
 
 python main.py
-`
+```
+
 ### Windows precompiled
 - Download zip
 - Extract
