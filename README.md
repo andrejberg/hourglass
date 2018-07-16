@@ -9,8 +9,11 @@
 ### From source
 `
 git clone git@github.com:andrejberg/hourglass.git
+
 cd hourglass
+
 pip install -r requirements.py
+
 python main.py
 `
 ### Windows precompiled
